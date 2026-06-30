@@ -585,7 +585,7 @@ textarea:focus-visible,
 }
 .hero-actions.visible { opacity: 1; transform: translateY(0); }
 
-/* ---- HERO VISUAL (browser mockup + floating cards) ---- */
+/* ---- HERO VISUAL (3D brand mark + floating cards) ---- */
 .hero-visual {
   position: relative;
   opacity: 0;
@@ -596,82 +596,43 @@ textarea:focus-visible,
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.hero-mockup {
+/* 3D rotating Delvora mark */
+.brand3d {
   position: relative;
-  border-radius: 16px;
-  border: 1px solid var(--border-2);
-  background: linear-gradient(160deg, #121016 0%, #0C0A0E 100%);
-  box-shadow:
-    0 40px 80px rgba(0,0,0,0.55),
-    0 0 0 1px rgba(232,73,122,0.08),
-    0 0 70px rgba(139,92,246,0.06);
-  overflow: hidden;
-  transform: perspective(1400px) rotateY(-9deg) rotateX(3deg);
-  transition: transform 0.5s var(--ease-out);
-  will-change: transform;
+  width: min(340px, 80%);
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+  perspective: 1100px;
+  pointer-events: none;
 }
-.hero-visual:hover .hero-mockup {
-  transform: perspective(1400px) rotateY(-4deg) rotateX(1deg);
-}
-
-.hmock-bar {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 12px 16px;
-  background: rgba(255,255,255,0.02);
-  border-bottom: 1px solid var(--border);
-}
-.hmock-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--border-2); }
-.hmock-dot:nth-child(1) { background: #E8497A; }
-.hmock-dot:nth-child(2) { background: #8B5CF6; opacity: 0.65; }
-.hmock-url {
-  margin-left: 12px;
-  flex: 1;
-  font-size: 11px;
-  color: var(--text-dim);
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 4px 12px;
-  text-align: center;
-}
-
-.hmock-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
-.hmock-hero {
-  height: 96px;
-  border-radius: 10px;
-  background:
-    radial-gradient(circle at 80% 30%, rgba(139,92,246,0.35) 0%, transparent 55%),
-    var(--grad-pink);
-  position: relative;
-  overflow: hidden;
-}
-.hmock-hero::after {
-  content: '';
+.brand3d-glow {
   position: absolute;
-  left: 18px; bottom: 18px;
-  width: 45%; height: 9px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.65);
-  box-shadow: 0 16px 0 -2px rgba(255,255,255,0.28), 0 30px 0 -3px rgba(255,255,255,0.18);
+  inset: -16%;
+  background: radial-gradient(circle, rgba(232,73,122,0.24) 0%, rgba(139,92,246,0.12) 45%, transparent 70%);
+  filter: blur(24px);
 }
-.hmock-lines { display: flex; gap: 10px; }
-.hmock-lines span {
-  height: 10px;
-  border-radius: 999px;
-  background: var(--border-2);
+.brand3d-rotor {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  animation: brand3dSpin 18s linear infinite;
 }
-.hmock-lines span:nth-child(1) { flex: 2; }
-.hmock-lines span:nth-child(2) { flex: 1; }
-.hmock-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.hmock-cards div {
-  height: 60px;
-  border-radius: 10px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
+@keyframes brand3dSpin {
+  from { transform: rotateX(-14deg) rotateY(0deg); }
+  to   { transform: rotateX(-14deg) rotateY(360deg); }
 }
-.hmock-cards div:nth-child(2) { border-color: var(--pink-border); background: rgba(232,73,122,0.06); }
+.brand3d svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: translateZ(var(--z, 0));
+}
+.brand3d .b3d-layer { stroke: #5A0E29; }
+.brand3d .b3d-face {
+  stroke: url(#delvoraGrad);
+  filter: drop-shadow(0 0 9px rgba(232,73,122,0.5));
+}
 
 .hero-float {
   position: absolute;
@@ -1128,55 +1089,6 @@ textarea:focus-visible,
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-}
-
-/* ---- 3D ROTATING BRAND MARK ---- */
-.brand3d {
-  position: absolute;
-  top: 50%;
-  right: 4%;
-  transform: translateY(-50%);
-  width: 300px;
-  height: 300px;
-  perspective: 1100px;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.9;
-}
-.brand3d-glow {
-  position: absolute;
-  inset: -18%;
-  background: radial-gradient(circle, rgba(232,73,122,0.22) 0%, rgba(139,92,246,0.10) 45%, transparent 70%);
-  filter: blur(22px);
-}
-.brand3d-rotor {
-  position: absolute;
-  inset: 0;
-  transform-style: preserve-3d;
-  animation: brand3dSpin 18s linear infinite;
-}
-@keyframes brand3dSpin {
-  from { transform: rotateX(-14deg) rotateY(0deg); }
-  to   { transform: rotateX(-14deg) rotateY(360deg); }
-}
-.brand3d svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  transform: translateZ(var(--z, 0));
-}
-.brand3d .b3d-layer { stroke: #5A0E29; }
-.brand3d .b3d-face {
-  stroke: url(#delvoraGrad);
-  filter: drop-shadow(0 0 9px rgba(232,73,122,0.5));
-}
-
-@media (max-width: 900px) {
-  .brand3d { width: 220px; opacity: 0.55; right: 1%; }
-}
-@media (max-width: 600px) {
-  .brand3d { display: none; }
 }
 
 .cta-mid-inner { position: relative; z-index: 1; text-align: center; }
@@ -2582,6 +2494,6 @@ a.detail-value:hover { color: var(--pink); }
   .hero-scroll,
   .hero-visual { opacity: 1 !important; transform: none !important; }
   .orb,
-  .hf-1, .hf-2 { animation: none !important; }
-  .hero-mockup { transform: none !important; }
+  .hf-1, .hf-2,
+  .brand3d-rotor { animation: none !important; }
 }
