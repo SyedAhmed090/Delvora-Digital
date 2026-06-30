@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const isMobile = window.matchMedia('(max-width: 768px)').matches;
   const isTouch  = window.matchMedia('(hover: none)').matches;
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 
   /* =====================================================
@@ -147,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const canvas  = document.getElementById('heroCanvas');
     const heroEl  = document.getElementById('home');
     const glowEl  = document.getElementById('heroCursorGlow');
-    if (!canvas || !heroEl) return;
+    if (!canvas || !heroEl || prefersReduced) return;
 
     const ctx = canvas.getContext('2d');
     const dpr = window.devicePixelRatio || 1;
@@ -338,7 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => heroScroll?.classList.add('visible'), 1400);
 
   // ---- Hero orb parallax on scroll ----
-  if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+  if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' && !prefersReduced) {
     gsap.to('.orb-1', {
       yPercent: -40,
       xPercent: -10,
@@ -448,7 +449,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const el = entry.target;
       const target = parseInt(el.dataset.target, 10);
 
-      if (typeof gsap !== 'undefined') {
+      if (prefersReduced) {
+        el.textContent = target;
+      } else if (typeof gsap !== 'undefined') {
         gsap.fromTo(el, { innerText: 0 }, {
           innerText: target,
           duration: 2,
@@ -475,7 +478,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /* =====================================================
      11. 3D TILT EFFECT (service cards, project cards, why cards)
      ===================================================== */
-  if (!isTouch) {
+  if (!isTouch && !prefersReduced) {
     function addTilt(selector, strength = 8) {
       document.querySelectorAll(selector).forEach(card => {
         card.addEventListener('mousemove', e => {
@@ -537,7 +540,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /* =====================================================
      13. MAGNETIC BUTTONS
      ===================================================== */
-  if (!isTouch && typeof gsap !== 'undefined') {
+  if (!isTouch && !prefersReduced && typeof gsap !== 'undefined') {
     document.querySelectorAll('.btn-primary, .btn-outline').forEach(btn => {
       btn.addEventListener('mousemove', e => {
         const rect = btn.getBoundingClientRect();
@@ -634,7 +637,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /* =====================================================
      16. GSAP PARALLAX ON SECTION BACKGROUNDS
      ===================================================== */
-  if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' && !isMobile) {
+  if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' && !isMobile && !prefersReduced) {
     // Mid-page CTA orb parallax
     gsap.to('.cta-orb', {
       yPercent: -30,

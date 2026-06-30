@@ -31,7 +31,7 @@
   <link rel="apple-touch-icon" href="assets/logo/delvora-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 
   <!-- Structured data: Organization / Local business -->
@@ -149,19 +149,43 @@
   <!-- Lazy cursor glow -->
   <div class="hero-cursor-glow" id="heroCursorGlow"></div>
   <div class="container hero-content">
-    <p class="hero-eyebrow" id="heroEyebrow">
-      <span class="eyebrow-dot"></span>
-      Pakistan's Premier Digital Studio
-    </p>
-    <h1 class="hero-headline">
-      <span class="line-wrap"><span class="h-line" id="hLine1">We Build Digital</span></span>
-      <span class="line-wrap"><span class="h-line gradient-text" id="hLine2">Experiences</span></span>
-      <span class="line-wrap"><span class="h-line" id="hLine3">That Drive Growth</span></span>
-    </h1>
-    <p class="hero-sub" id="heroSub">We're a digital studio from Pakistan that turns ideas into high-performance websites, apps, and brands — built to make a real impact.</p>
-    <div class="hero-actions" id="heroActions">
-      <a href="#projects" class="btn btn-primary btn-lg">View Our Work</a>
-      <a href="#contact" class="btn btn-outline btn-lg" data-open-form>Start a Project</a>
+    <div class="hero-copy">
+      <p class="hero-eyebrow" id="heroEyebrow">
+        <span class="eyebrow-dot"></span>
+        Pakistan's Premier Digital Studio
+      </p>
+      <h1 class="hero-headline">
+        <span class="line-wrap"><span class="h-line" id="hLine1">We Build Digital</span></span>
+        <span class="line-wrap"><span class="h-line gradient-text" id="hLine2">Experiences</span></span>
+        <span class="line-wrap"><span class="h-line" id="hLine3">That Drive Growth</span></span>
+      </h1>
+      <p class="hero-sub" id="heroSub">We're a digital studio from Pakistan that turns ideas into high-performance websites, apps, and brands — built to make a real impact.</p>
+      <div class="hero-actions" id="heroActions">
+        <a href="#projects" class="btn btn-primary btn-lg">View Our Work</a>
+        <a href="#contact" class="btn btn-outline btn-lg" data-open-form>Start a Project</a>
+      </div>
+    </div>
+
+    <div class="hero-visual" aria-hidden="true">
+      <div class="hero-mockup">
+        <div class="hmock-bar">
+          <span class="hmock-dot"></span><span class="hmock-dot"></span><span class="hmock-dot"></span>
+          <div class="hmock-url">delvoradigital.com</div>
+        </div>
+        <div class="hmock-body">
+          <div class="hmock-hero"></div>
+          <div class="hmock-lines"><span></span><span></span></div>
+          <div class="hmock-cards"><div></div><div></div><div></div></div>
+        </div>
+      </div>
+      <div class="hero-float hf-1">
+        <strong>50+</strong>
+        <span>Projects delivered</span>
+      </div>
+      <div class="hero-float hf-2">
+        <span class="hf-stars">★★★★★</span>
+        <span>5.0 average rating</span>
+      </div>
     </div>
   </div>
   <div class="hero-scroll" id="heroScroll">
@@ -583,12 +607,14 @@
     <span class="section-tag reveal">Why Delvora</span>
     <h2 class="section-heading">Built different.<br><span class="gradient-text">Built to deliver.</span></h2>
     <div class="why-grid">
-      <div class="why-card">
+      <div class="why-card why-card--featured">
         <div class="why-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         </div>
-        <h3>We Deliver What We Promise</h3>
-        <p>On-time delivery and transparent communication — no surprises, no excuses.</p>
+        <div class="why-text">
+          <h3>We Deliver What We Promise</h3>
+          <p>On-time delivery and transparent communication — no surprises, no excuses. The work ships when we say it will, and you always know exactly where things stand.</p>
+        </div>
       </div>
       <div class="why-card">
         <div class="why-icon">
