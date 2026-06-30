@@ -14,6 +14,23 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+// ---- SPAM GUARDS ----
+// 1. Honeypot: the "website" field is hidden from users; only bots fill it.
+//    Pretend success so bots don't probe further.
+if (!empty($_POST['website'])) {
+    echo json_encode(['success' => true, 'message' => 'Message sent successfully']);
+    exit;
+}
+// 2. Time-trap: reject submissions completed in under 2s (clock-skew safe —
+//    only rejects a positive, implausibly-small elapsed time).
+if (isset($_POST['form_ts']) && is_numeric($_POST['form_ts'])) {
+    $elapsed_ms = (microtime(true) * 1000) - (float) $_POST['form_ts'];
+    if ($elapsed_ms >= 0 && $elapsed_ms < 2000) {
+        echo json_encode(['success' => false, 'message' => 'Please take a moment and try again.']);
+        exit;
+    }
+}
+
 // ---- CONFIG — Update these before going live ----
 $to_email   = 'hello@delvoradigital.com';   // Change to real email
 $from_email = 'noreply@delvoradigital.com';  // Change to your domain email

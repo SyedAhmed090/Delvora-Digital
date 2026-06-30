@@ -27,12 +27,31 @@
   <meta name="twitter:description" content="Pakistan's premier digital agency building brands that drive real results through web, mobile, design, and marketing.">
   <meta name="twitter:image" content="https://delvoradigital.com/assets/og-image.jpg">
 
+  <link rel="icon" type="image/svg+xml" href="assets/logo/delvora-mark.svg">
   <link rel="icon" type="image/png" href="assets/logo/delvora-logo.png">
   <link rel="apple-touch-icon" href="assets/logo/delvora-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+
+  <!-- Google Analytics 4 — paste your Measurement ID into DELVORA_GA_ID below. -->
+  <!-- Until a real ID is set, nothing loads (no tracking, no junk requests). -->
+  <script>
+    window.DELVORA_GA_ID = 'G-XXXXXXXXXX'; // <-- replace with your GA4 ID
+    (function () {
+      var id = window.DELVORA_GA_ID;
+      if (!id || id.indexOf('XXXX') !== -1) return; // not configured yet
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;
+      document.head.appendChild(s);
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () { dataLayer.push(arguments); };
+      gtag('js', new Date());
+      gtag('config', id);
+    })();
+  </script>
 
   <!-- Structured data: Organization / Local business -->
   <script type="application/ld+json">
@@ -131,7 +150,7 @@
 <nav class="navbar" id="navbar">
   <div class="container nav-inner">
     <a href="#" class="nav-logo">
-      <img src="assets/logo/delvora-logo.png" alt="Delvora Digital Studio" class="logo-img">
+      <img src="assets/logo/delvora-logo.png" alt="Delvora Digital Studio" class="logo-img" width="51" height="36">
       <span class="logo-text">DELVORA</span>
     </a>
     <ul class="nav-links" id="navLinks">
@@ -935,6 +954,12 @@
             <textarea id="message" name="message" rows="4" placeholder="Briefly describe what you're looking to build..." required></textarea>
           </div>
 
+          <!-- Spam guards: humans never touch these -->
+          <div class="hp-field" aria-hidden="true">
+            <label>Leave this field empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+          </div>
+          <input type="hidden" name="form_ts" value="">
+
           <button type="submit" class="btn btn-primary btn-full" id="submitBtn">
             <span class="btn-text">Send Message</span>
             <span class="btn-loading" style="display:none">Sending...</span>
@@ -961,7 +986,7 @@
     <div class="footer-top">
       <div class="footer-brand">
         <a href="#" class="footer-logo">
-          <img src="assets/logo/delvora-logo.png" alt="Delvora Digital Studio" class="logo-img">
+          <img src="assets/logo/delvora-logo.png" alt="Delvora Digital Studio" class="logo-img" width="51" height="36">
           <span class="logo-text">DELVORA</span>
         </a>
         <p class="footer-tagline">Building digital brands that drive real results across Pakistan.</p>
@@ -1015,8 +1040,8 @@
     <div class="footer-bottom">
       <p>© 2025 Delvora Digital Studio. All rights reserved.</p>
       <div class="footer-bottom-links">
-        <a href="#">Privacy Policy</a>
-        <a href="#">Terms of Service</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Service</a>
       </div>
     </div>
   </div>
@@ -1144,6 +1169,13 @@
           <label for="pp_message">Tell Us About Your Project *</label>
           <textarea id="pp_message" name="message" rows="3" placeholder="What are you looking to build? Share any details, deadlines, or ideas..." required></textarea>
         </div>
+
+        <!-- Spam guards: humans never touch these -->
+        <div class="hp-field" aria-hidden="true">
+          <label>Leave this field empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+        </div>
+        <input type="hidden" name="form_ts" value="">
+
         <button type="submit" class="btn btn-primary btn-lg btn-full" id="ppSubmitBtn">
           <span class="pp-btn-text">Send Message →</span>
           <span class="pp-btn-loading" style="display:none">Sending...</span>
@@ -1160,10 +1192,10 @@
   </div>
 </div>
 
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script src="js/main.js"></script>
+<!-- Scripts (deferred so they don't block parsing; order preserved) -->
+<script defer src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script defer src="js/main.js"></script>
 </body>
 </html>

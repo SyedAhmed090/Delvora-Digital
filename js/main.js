@@ -8,6 +8,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const isTouch  = window.matchMedia('(hover: none)').matches;
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* Analytics helper — safely no-ops until GA4 is configured */
+  function track(name, params) {
+    if (typeof window.gtag === 'function') window.gtag('event', name, params || {});
+  }
+
+  /* Stamp each form's load time for the spam time-trap */
+  document.querySelectorAll('input[name="form_ts"]').forEach(i => { i.value = Date.now(); });
+
 
   /* =====================================================
      1. LENIS SMOOTH SCROLL
@@ -756,6 +764,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (data.success) {
         form.reset();
         if (success) success.style.display = 'flex';
+        track('generate_lead', { form: 'contact' });
       } else {
         if (error) error.style.display = 'flex';
       }
@@ -1052,6 +1061,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const cbId = svcCheckboxIds[_key];
           if (cbId) { const cb = document.getElementById(cbId); if (cb) cb.checked = true; }
           if (ppSuccess) ppSuccess.style.display = 'flex';
+          track('generate_lead', { form: 'popup' });
         } else {
           if (ppError) ppError.style.display = 'flex';
         }
@@ -1074,6 +1084,23 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       if (typeof window._delvoraOpenForm === 'function') window._delvoraOpenForm();
     });
+  });
+
+
+  /* =====================================================
+     21. ANALYTICS EVENTS (GA4)
+     ===================================================== */
+  // WhatsApp clicks (float button, contact card, footer, form modal)
+  document.querySelectorAll('a[href^="https://wa.me"]').forEach(a => {
+    a.addEventListener('click', () => track('whatsapp_click'));
+  });
+  // Form opens (any CTA that opens the popup)
+  document.querySelectorAll('[data-open-form]').forEach(btn => {
+    btn.addEventListener('click', () => track('form_open', { label: (btn.textContent || '').trim().slice(0, 40) }));
+  });
+  // Email link clicks
+  document.querySelectorAll('a[href^="mailto:"]').forEach(a => {
+    a.addEventListener('click', () => track('email_click'));
   });
 
 });
