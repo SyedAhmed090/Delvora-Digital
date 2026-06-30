@@ -1118,7 +1118,11 @@ ul { list-style: none; }
 }
 .process-step:hover .step-num { opacity: 1; }
 
-.process-step:last-child { grid-column: 1 / -1; }
+.process-step:last-child {
+  grid-column: 1 / -1;
+  width: 50%;
+  margin: 0 auto;
+}
 
 .step-content h3 {
   font-size: 18px;
