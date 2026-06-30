@@ -39,8 +39,14 @@ Stack reminder: plain HTML/CSS/vanilla JS on cPanel shared hosting, PHP availabl
 ## Phase 1 — Legal + measurement   ✅ BUILT (waiting on your inputs to activate)
 
 > Status: privacy.html + terms.html live and linked; GA4 wired (paste your ID
-> into `DELVORA_GA_ID`); honeypot + time-trap active on both forms. Still need:
-> your GA4 Measurement ID, and a form-delivery decision (point 7, option A/B/C).
+> into `DELVORA_GA_ID`); honeypot + time-trap active on both forms.
+> Point 7 = **option B (PHPMailer + SMTP)** is implemented — PHPMailer v6.9.1
+> bundled in `php/lib/PHPMailer/`, sending logic in `php/contact.php`.
+>
+> Still need to go live:
+> 1. **GA4 Measurement ID** — replace `G-XXXXXXXXXX` in index/privacy/terms.
+> 2. **SMTP credentials** — on the server, copy `php/mail-config.sample.php`
+>    to `php/mail-config.php` and fill in host/port/user/pass (gitignored).
 
 
 ### 5. Privacy Policy & Terms pages

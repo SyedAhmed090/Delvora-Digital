@@ -1,11 +1,15 @@
 <?php
 /**
  * Delvora Digital Studio — Contact Form Handler
- * Works on cPanel with PHP mail()
+ * Sends via SMTP using PHPMailer (php/lib/PHPMailer).
+ * SMTP credentials live in php/mail-config.php (copy from mail-config.sample.php).
  */
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 
 // Only allow POST
@@ -31,10 +35,15 @@ if (isset($_POST['form_ts']) && is_numeric($_POST['form_ts'])) {
     }
 }
 
-// ---- CONFIG — Update these before going live ----
-$to_email   = 'hello@delvoradigital.com';   // Change to real email
-$from_email = 'noreply@delvoradigital.com';  // Change to your domain email
-$site_name  = 'Delvora Digital Studio';
+// ---- LOAD SMTP CONFIG ----
+$config_file = __DIR__ . '/mail-config.php';
+if (!file_exists($config_file)) {
+    error_log('contact.php: missing php/mail-config.php (copy from mail-config.sample.php).');
+    echo json_encode(['success' => false, 'message' => 'Mail is not configured yet. Please reach us on WhatsApp or email directly.']);
+    exit;
+}
+$cfg = require $config_file;
+$site_name = $cfg['from_name'] ?? 'Delvora Digital Studio';
 
 // ---- SANITIZE INPUTS ----
 function clean($val) {
@@ -50,7 +59,7 @@ $budget  = clean($_POST['budget']  ?? '');
 
 // Services (array of checkboxes)
 $services_raw = $_POST['services'] ?? [];
-$services = array_map('htmlspecialchars', (array)$services_raw);
+$services = array_map('htmlspecialchars', (array) $services_raw);
 $services_str = !empty($services) ? implode(', ', $services) : 'Not specified';
 
 // ---- VALIDATION ----
@@ -67,8 +76,7 @@ if (!empty($errors)) {
 // ---- BUILD EMAIL ----
 $subject = "New Project Inquiry from {$name} — {$site_name}";
 
-$body = "
-=================================================
+$body = "=================================================
    NEW PROJECT INQUIRY — {$site_name}
 =================================================
 
@@ -85,22 +93,11 @@ Message:
 {$message}
 
 =================================================
-Sent from: {$site_name} website contact form
+Sent from the {$site_name} website contact form
 =================================================
 ";
 
-$headers  = "From: {$site_name} <{$from_email}>\r\n";
-$headers .= "Reply-To: {$name} <{$email}>\r\n";
-$headers .= "X-Mailer: PHP/" . phpversion() . "\r\n";
-$headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
-
-// ---- SEND ----
-$sent = mail($to_email, $subject, $body, $headers);
-
-if ($sent) {
-    // Send auto-reply to client
-    $reply_subject = "We received your message — {$site_name}";
-    $reply_body = "Hi {$name},
+$reply_body = "Hi {$name},
 
 Thank you for reaching out to Delvora Digital Studio!
 
@@ -114,14 +111,60 @@ In the meantime, feel free to reach us on WhatsApp for a faster response.
 
 Best regards,
 The Delvora Digital Team
-hello@delvoradigital.com
+{$cfg['to_email']}
 ";
-    $reply_headers  = "From: {$site_name} <{$from_email}>\r\n";
-    $reply_headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
 
-    mail($email, $reply_subject, $reply_body, $reply_headers);
+// ---- SEND VIA SMTP (PHPMailer) ----
+require __DIR__ . '/lib/PHPMailer/Exception.php';
+require __DIR__ . '/lib/PHPMailer/PHPMailer.php';
+require __DIR__ . '/lib/PHPMailer/SMTP.php';
+
+try {
+    $mail = new PHPMailer(true);
+    $mail->isSMTP();
+    $mail->Host       = $cfg['smtp_host'];
+    $mail->SMTPAuth   = true;
+    $mail->Username   = $cfg['smtp_user'];
+    $mail->Password   = $cfg['smtp_pass'];
+    $mail->SMTPSecure = $cfg['smtp_secure'] ?: PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Port       = (int) $cfg['smtp_port'];
+    $mail->CharSet    = 'UTF-8';
+    if (!empty($cfg['debug'])) {
+        $mail->SMTPDebug   = SMTP::DEBUG_SERVER;
+        $mail->Debugoutput = 'error_log';
+    }
+
+    // Notification to the studio
+    $mail->setFrom($cfg['from_email'], $site_name);
+    $mail->addAddress($cfg['to_email']);
+    $mail->addReplyTo($email, $name);
+    $mail->Subject = $subject;
+    $mail->Body    = $body;
+    $mail->send();
+
+    // Auto-reply to the client (failure here shouldn't fail the request)
+    try {
+        $reply = new PHPMailer(true);
+        $reply->isSMTP();
+        $reply->Host       = $cfg['smtp_host'];
+        $reply->SMTPAuth   = true;
+        $reply->Username   = $cfg['smtp_user'];
+        $reply->Password   = $cfg['smtp_pass'];
+        $reply->SMTPSecure = $cfg['smtp_secure'] ?: PHPMailer::ENCRYPTION_STARTTLS;
+        $reply->Port       = (int) $cfg['smtp_port'];
+        $reply->CharSet    = 'UTF-8';
+        $reply->setFrom($cfg['from_email'], $site_name);
+        $reply->addAddress($email, $name);
+        $reply->addReplyTo($cfg['to_email'], $site_name);
+        $reply->Subject = "We received your message — {$site_name}";
+        $reply->Body    = $reply_body;
+        $reply->send();
+    } catch (Exception $e) {
+        error_log('contact.php auto-reply failed: ' . $e->getMessage());
+    }
 
     echo json_encode(['success' => true, 'message' => 'Message sent successfully']);
-} else {
-    echo json_encode(['success' => false, 'message' => 'Failed to send email']);
+} catch (Exception $e) {
+    error_log('contact.php send failed: ' . $e->getMessage());
+    echo json_encode(['success' => false, 'message' => 'Failed to send. Please try WhatsApp or email us directly.']);
 }

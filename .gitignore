@@ -1,0 +1,7 @@
+# Real SMTP credentials — created on the server, never committed
+php/mail-config.php
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.log
