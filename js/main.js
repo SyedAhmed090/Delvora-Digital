@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
       gsap.to(ring, { x: mouseX, y: mouseY, duration: 0.28, ease: 'power2.out' });
     });
 
-    document.querySelectorAll('a, button, .service-card, .project-card, .faq-q, .team-card').forEach(el => {
+    document.querySelectorAll('a, button, .service-card, .project-card, .faq-q, .team-card-pro').forEach(el => {
       el.addEventListener('mouseenter', () => {
         dot?.classList.add('hovering');
         ring?.classList.add('hovering');
@@ -514,7 +514,7 @@ document.addEventListener('DOMContentLoaded', () => {
     addTilt('.service-card', 6);
     addTilt('.project-card', 5);
     addTilt('.why-card', 7);
-    addTilt('.team-card', 8);
+    addTilt('.team-card-pro', 8);
   }
 
 

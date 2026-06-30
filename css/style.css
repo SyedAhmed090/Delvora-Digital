@@ -305,14 +305,6 @@ ul { list-style: none; }
 }
 .hero-cursor-glow.active { opacity: 1; }
 
-/* ---- PARALLAX SECTIONS ---- */
-.parallax-bg {
-  will-change: transform;
-}
-
-/* ---- SECTION HEADING SPLIT (wrapper) ---- */
-.split-heading { overflow: visible; }
-
 
 /* =====================================================
    NAVBAR

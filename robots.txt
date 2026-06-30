@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# Block server-side handler from indexing
+Disallow: /php/
+
+Sitemap: https://delvoradigital.com/sitemap.xml
