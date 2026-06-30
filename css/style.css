@@ -46,24 +46,12 @@ html { -webkit-font-smoothing: antialiased; }
 body {
   font-family: 'Inter', sans-serif;
   background:
-    radial-gradient(ellipse 900px 700px at -5% 0%,   rgba(232,73,122,0.09) 0%, transparent 55%),
-    radial-gradient(ellipse 700px 900px at 105% 45%,  rgba(139,92,246,0.06) 0%, transparent 55%),
+    radial-gradient(ellipse 900px 700px at -5% 0%,  rgba(232,73,122,0.18) 0%, transparent 55%),
+    radial-gradient(ellipse 700px 900px at 105% 45%, rgba(139,92,246,0.12) 0%, transparent 55%),
     var(--bg);
   color: var(--text);
   line-height: 1.6;
   overflow-x: hidden;
-}
-
-body::after {
-  content: '';
-  position: fixed;
-  inset: -50%;
-  width: 200%;
-  height: 200%;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  opacity: 0.04;
-  pointer-events: none;
-  z-index: 9999;
 }
 
 ::selection { background: var(--pink); color: #fff; }
@@ -677,7 +665,8 @@ ul { list-style: none; }
    ===================================================== */
 .about {
   background:
-    radial-gradient(ellipse 55% 50% at 100% 0%, rgba(232,73,122,0.08) 0%, transparent 60%),
+    radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px) 0 0 / 28px 28px,
+    radial-gradient(ellipse 55% 50% at 100% 0%, rgba(232,73,122,0.20) 0%, transparent 60%),
     var(--bg);
 }
 
@@ -756,7 +745,8 @@ ul { list-style: none; }
    ===================================================== */
 .services {
   background:
-    radial-gradient(ellipse 45% 60% at 100% 50%, rgba(232,73,122,0.07) 0%, transparent 55%),
+    radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px) 0 0 / 28px 28px,
+    radial-gradient(ellipse 45% 60% at 100% 50%, rgba(232,73,122,0.16) 0%, transparent 55%),
     var(--bg-2);
 }
 .services .section-heading, .services .section-sub {
@@ -868,7 +858,8 @@ ul { list-style: none; }
    ===================================================== */
 .projects {
   background:
-    radial-gradient(ellipse 50% 60% at 0% 100%, rgba(139,92,246,0.07) 0%, transparent 60%),
+    radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px) 0 0 / 28px 28px,
+    radial-gradient(ellipse 50% 60% at 0% 100%, rgba(139,92,246,0.18) 0%, transparent 60%),
     var(--bg);
 }
 .projects .container { margin-bottom: 40px; }
@@ -979,7 +970,9 @@ ul { list-style: none; }
 .cta-mid {
   position: relative;
   overflow: hidden;
-  background: var(--bg-2);
+  background:
+    radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px) 0 0 / 28px 28px,
+    var(--bg-2);
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
   padding: 100px 0;
@@ -1084,7 +1077,8 @@ ul { list-style: none; }
    ===================================================== */
 .process {
   background:
-    radial-gradient(ellipse 50% 55% at 0% 100%, rgba(139,92,246,0.06) 0%, transparent 55%),
+    radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px) 0 0 / 28px 28px,
+    radial-gradient(ellipse 50% 55% at 0% 100%, rgba(139,92,246,0.16) 0%, transparent 55%),
     var(--bg-2);
 }
 .process .section-sub { max-width: 640px; }
@@ -1199,7 +1193,8 @@ ul { list-style: none; }
    ===================================================== */
 .team {
   background:
-    radial-gradient(ellipse 60% 50% at 100% 50%, rgba(232,73,122,0.07) 0%, transparent 55%),
+    radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px) 0 0 / 28px 28px,
+    radial-gradient(ellipse 60% 50% at 100% 50%, rgba(232,73,122,0.16) 0%, transparent 55%),
     var(--bg-2);
 }
 
@@ -1352,7 +1347,8 @@ ul { list-style: none; }
    ===================================================== */
 .faq {
   background:
-    radial-gradient(ellipse 70% 60% at 50% 0%, rgba(232,73,122,0.06) 0%, transparent 55%),
+    radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px) 0 0 / 28px 28px,
+    radial-gradient(ellipse 70% 60% at 50% 0%, rgba(232,73,122,0.18) 0%, transparent 55%),
     var(--bg);
 }
 
@@ -1420,7 +1416,8 @@ ul { list-style: none; }
    ===================================================== */
 .contact {
   background:
-    radial-gradient(ellipse 60% 55% at 0% 50%, rgba(139,92,246,0.07) 0%, transparent 55%),
+    radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px) 0 0 / 28px 28px,
+    radial-gradient(ellipse 60% 55% at 0% 50%, rgba(139,92,246,0.16) 0%, transparent 55%),
     var(--bg-2);
 }
 
@@ -1537,7 +1534,9 @@ a.detail-value:hover { color: var(--pink); }
    ===================================================== */
 .footer {
   position: relative;
-  background: var(--bg);
+  background:
+    radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px) 0 0 / 28px 28px,
+    var(--bg);
   border-top: 1px solid var(--border);
   overflow: hidden;
 }
@@ -1635,7 +1634,8 @@ a.detail-value:hover { color: var(--pink); }
    ===================================================== */
 .testimonials {
   background:
-    radial-gradient(ellipse 55% 60% at 0% 0%, rgba(139,92,246,0.07) 0%, transparent 55%),
+    radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px) 0 0 / 28px 28px,
+    radial-gradient(ellipse 55% 60% at 0% 0%, rgba(139,92,246,0.16) 0%, transparent 55%),
     var(--bg-2);
 }
 
