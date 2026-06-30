@@ -124,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('a[href^="#"]').forEach(a => {
     a.addEventListener('click', e => {
       if (a.hasAttribute('data-open-form')) return; // handled by form popup
+      if (a.classList.contains('modal-cta')) return; // handled by service modal's own listener
       const id = a.getAttribute('href');
       if (id === '#') return;
       const target = document.querySelector(id);
