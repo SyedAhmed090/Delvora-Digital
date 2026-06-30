@@ -139,7 +139,182 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   /* =====================================================
-     7. HERO ANIMATIONS (mask reveal on load)
+     7. HERO CANVAS — PARTICLE CONSTELLATION
+     ===================================================== */
+  (function initHeroCanvas() {
+    const canvas  = document.getElementById('heroCanvas');
+    const heroEl  = document.getElementById('home');
+    const glowEl  = document.getElementById('heroCursorGlow');
+    if (!canvas || !heroEl) return;
+
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+
+    function resize() {
+      const w = heroEl.offsetWidth;
+      const h = heroEl.offsetHeight;
+      canvas.width  = w * dpr;
+      canvas.height = h * dpr;
+      canvas.style.width  = w + 'px';
+      canvas.style.height = h + 'px';
+      ctx.scale(dpr, dpr);
+      W = w; H = h;
+    }
+
+    let W, H;
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+
+    // --- Particle ---
+    const COUNT = window.innerWidth < 768 ? 38 : 72;
+    const CONN  = 140;   // max distance for particle–particle lines
+    const MDIST = 210;   // max distance for cursor–particle interaction
+
+    class Dot {
+      constructor() { this.spawn(); }
+      spawn() {
+        this.x  = Math.random() * W;
+        this.y  = Math.random() * H;
+        this.r  = Math.random() * 1.6 + 0.5;
+        this.base = Math.random() * 0.35 + 0.12;
+        this.o  = this.base;
+        this.vx = (Math.random() - 0.5) * 0.38;
+        this.vy = (Math.random() - 0.5) * 0.38;
+      }
+      update(mx, my) {
+        this.x += this.vx;
+        this.y += this.vy;
+        if (this.x < 0)  { this.x = 0;  this.vx *= -1; }
+        if (this.x > W)  { this.x = W;  this.vx *= -1; }
+        if (this.y < 0)  { this.y = 0;  this.vy *= -1; }
+        if (this.y > H)  { this.y = H;  this.vy *= -1; }
+
+        const dx = mx - this.x, dy = my - this.y;
+        const d  = Math.sqrt(dx * dx + dy * dy);
+        if (d < MDIST) {
+          const f = (MDIST - d) / MDIST;
+          this.x += dx * f * 0.028;
+          this.y += dy * f * 0.028;
+          this.o  = Math.min(0.95, this.base + f * 0.55);
+        } else {
+          this.o += (this.base - this.o) * 0.06;
+        }
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(232,73,122,${this.o})`;
+        ctx.fill();
+      }
+    }
+
+    const dots = Array.from({ length: COUNT }, () => new Dot());
+
+    // Mouse position — off-screen by default
+    let mx = -9999, my = -9999;
+    let glowX = W / 2, glowY = H / 2, tGlowX = W / 2, tGlowY = H / 2;
+    let mouseInHero = false;
+
+    heroEl.addEventListener('mousemove', e => {
+      const r = heroEl.getBoundingClientRect();
+      mx = e.clientX - r.left;
+      my = e.clientY - r.top;
+      tGlowX = e.clientX - r.left;
+      tGlowY = e.clientY - r.top;
+      mouseInHero = true;
+      glowEl?.classList.add('active');
+    }, { passive: true });
+
+    heroEl.addEventListener('mouseleave', () => {
+      mx = -9999; my = -9999;
+      mouseInHero = false;
+      glowEl?.classList.remove('active');
+    });
+
+    function drawLines() {
+      for (let i = 0; i < dots.length; i++) {
+        const a = dots[i];
+
+        // Dot ↔ dot
+        for (let j = i + 1; j < dots.length; j++) {
+          const b  = dots[j];
+          const dx = a.x - b.x, dy = a.y - b.y;
+          const d  = Math.sqrt(dx * dx + dy * dy);
+          if (d < CONN) {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(232,73,122,${(1 - d / CONN) * 0.16})`;
+            ctx.lineWidth = 0.55;
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+          }
+        }
+
+        // Cursor ↔ dot
+        if (mouseInHero) {
+          const dx = mx - a.x, dy = my - a.y;
+          const d  = Math.sqrt(dx * dx + dy * dy);
+          if (d < MDIST) {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(232,73,122,${(1 - d / MDIST) * 0.6})`;
+            ctx.lineWidth = 0.9;
+            ctx.moveTo(mx, my);
+            ctx.lineTo(a.x, a.y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Draw cursor dot on canvas
+      if (mouseInHero) {
+        ctx.beginPath();
+        ctx.arc(mx, my, 3, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(232,73,122,0.8)';
+        ctx.fill();
+        // Outer ring
+        ctx.beginPath();
+        ctx.arc(mx, my, 12, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(232,73,122,0.2)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    }
+
+    let rafId;
+    function animate() {
+      ctx.clearRect(0, 0, W, H);
+      dots.forEach(d => { d.update(mx, my); d.draw(); });
+      drawLines();
+
+      // Lazy glow follow
+      glowX += (tGlowX - glowX) * 0.07;
+      glowY += (tGlowY - glowY) * 0.07;
+      if (glowEl) {
+        glowEl.style.left = glowX + 'px';
+        glowEl.style.top  = glowY + 'px';
+      }
+
+      rafId = requestAnimationFrame(animate);
+    }
+
+    animate();
+    setTimeout(() => canvas.classList.add('ready'), 400);
+
+    // Pause when hero is off-screen (performance)
+    const pauseObserver = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) {
+        if (!rafId) animate();
+      } else {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+    }, { threshold: 0 });
+    pauseObserver.observe(heroEl);
+  })();
+
+
+  /* =====================================================
+     8. HERO TEXT ANIMATIONS (mask reveal on load)
      ===================================================== */
   const heroEyebrow = document.getElementById('heroEyebrow');
   const heroSub     = document.getElementById('heroSub');

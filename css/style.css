@@ -264,6 +264,35 @@ ul { list-style: none; }
   will-change: transform;
 }
 
+/* ---- HERO CANVAS & CURSOR GLOW ---- */
+.hero-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+.hero-canvas.ready { opacity: 1; }
+
+.hero-cursor-glow {
+  position: absolute;
+  width: 650px;
+  height: 650px;
+  background: radial-gradient(circle, rgba(232, 73, 122, 0.10) 0%, rgba(232, 73, 122, 0.04) 40%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+  will-change: transform;
+  top: 0; left: 0;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.6s ease;
+  opacity: 0;
+}
+.hero-cursor-glow.active { opacity: 1; }
+
 /* ---- PARALLAX SECTIONS ---- */
 .parallax-bg {
   will-change: transform;
@@ -448,7 +477,7 @@ ul { list-style: none; }
 
 .hero-content {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   text-align: center;
   padding: 80px 24px;
 }
@@ -533,6 +562,7 @@ ul { list-style: none; }
   gap: 8px;
   opacity: 0;
   transition: opacity 1s var(--ease-out);
+  z-index: 3;
 }
 .hero-scroll.visible { opacity: 1; }
 
