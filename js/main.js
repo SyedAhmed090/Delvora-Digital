@@ -1103,4 +1103,85 @@ document.addEventListener('DOMContentLoaded', () => {
     a.addEventListener('click', () => track('email_click'));
   });
 
+
+  /* =====================================================
+     22. FREE AUDIT FORM
+     ===================================================== */
+  const auditForm = document.getElementById('auditForm');
+  if (auditForm) {
+    const auBtn     = document.getElementById('auSubmitBtn');
+    const auText    = auBtn?.querySelector('.au-btn-text');
+    const auLoad    = auBtn?.querySelector('.au-btn-loading');
+    const auSuccess = document.getElementById('auSuccess');
+    const auError   = document.getElementById('auError');
+
+    auditForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      if (auText) auText.style.display = 'none';
+      if (auLoad) auLoad.style.display = 'inline';
+      if (auBtn)  auBtn.disabled = true;
+      if (auSuccess) auSuccess.style.display = 'none';
+      if (auError)   auError.style.display   = 'none';
+
+      try {
+        const res  = await fetch('php/contact.php', { method: 'POST', body: new FormData(auditForm) });
+        const data = await res.json();
+        if (data.success) {
+          auditForm.reset();
+          if (auSuccess) auSuccess.style.display = 'flex';
+          track('generate_lead', { form: 'audit' });
+        } else {
+          if (auError) auError.style.display = 'flex';
+        }
+      } catch {
+        if (auError) auError.style.display = 'flex';
+      } finally {
+        if (auText) auText.style.display = 'inline';
+        if (auLoad) auLoad.style.display = 'none';
+        if (auBtn)  auBtn.disabled = false;
+      }
+    });
+  }
+
+
+  /* =====================================================
+     23. BOOK A CALL (Calendly popup, lazy-loaded)
+     ===================================================== */
+  let _calendlyLoading = false;
+  function loadCalendly(cb) {
+    if (window.Calendly) { cb(); return; }
+    if (!document.getElementById('calendly-css')) {
+      const link = document.createElement('link');
+      link.id = 'calendly-css';
+      link.rel = 'stylesheet';
+      link.href = 'https://assets.calendly.com/assets/external/widget.css';
+      document.head.appendChild(link);
+    }
+    if (_calendlyLoading) { return; }
+    _calendlyLoading = true;
+    const s = document.createElement('script');
+    s.src = 'https://assets.calendly.com/assets/external/widget.js';
+    s.async = true;
+    s.onload = cb;
+    document.body.appendChild(s);
+  }
+
+  function openCalendly() {
+    track('book_call_click');
+    const url = window.DELVORA_CALENDLY_URL;
+    const configured = url && url.indexOf('your-handle') === -1;
+    if (!configured) {
+      // Not set up yet — fall back to the contact form so the click isn't wasted.
+      if (typeof window._delvoraOpenForm === 'function') window._delvoraOpenForm();
+      return;
+    }
+    loadCalendly(() => {
+      if (window.Calendly) window.Calendly.initPopupWidget({ url });
+    });
+  }
+
+  document.querySelectorAll('[data-book-call]').forEach(btn => {
+    btn.addEventListener('click', e => { e.preventDefault(); openCalendly(); });
+  });
+
 });

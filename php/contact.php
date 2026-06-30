@@ -50,33 +50,72 @@ function clean($val) {
     return htmlspecialchars(strip_tags(trim($val)), ENT_QUOTES, 'UTF-8');
 }
 
+$form_type = clean($_POST['form_type'] ?? 'project');
+
 $name    = clean($_POST['name']    ?? '');
 $email   = filter_var(trim($_POST['email'] ?? ''), FILTER_SANITIZE_EMAIL);
 $phone   = clean($_POST['phone']   ?? '');
 $company = clean($_POST['company'] ?? '');
 $message = clean($_POST['message'] ?? '');
 $budget  = clean($_POST['budget']  ?? '');
+$site_url = filter_var(trim($_POST['site_url'] ?? ''), FILTER_SANITIZE_URL);
 
 // Services (array of checkboxes)
 $services_raw = $_POST['services'] ?? [];
 $services = array_map('htmlspecialchars', (array) $services_raw);
 $services_str = !empty($services) ? implode(', ', $services) : 'Not specified';
 
-// ---- VALIDATION ----
-$errors = [];
-if (empty($name))    $errors[] = 'Name is required';
-if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Valid email is required';
-if (empty($message)) $errors[] = 'Message is required';
+if ($form_type === 'audit') {
+    // ---- FREE AUDIT REQUEST ----
+    $errors = [];
+    if (empty($name))  $errors[] = 'Name is required';
+    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Valid email is required';
+    if (empty($site_url)) $errors[] = 'Website URL is required';
+    if (!empty($errors)) {
+        echo json_encode(['success' => false, 'message' => implode('. ', $errors)]);
+        exit;
+    }
 
-if (!empty($errors)) {
-    echo json_encode(['success' => false, 'message' => implode('. ', $errors)]);
-    exit;
-}
+    $subject = "New Free Audit Request from {$name} — {$site_name}";
+    $body = "=================================================
+   NEW FREE AUDIT REQUEST — {$site_name}
+=================================================
 
-// ---- BUILD EMAIL ----
-$subject = "New Project Inquiry from {$name} — {$site_name}";
+Name:     {$name}
+Email:    {$email}
+Phone:    " . ($phone ?: 'Not provided') . "
+Website:  {$site_url}
 
-$body = "=================================================
+=================================================
+Sent from the {$site_name} free-audit form
+=================================================
+";
+    $reply_body = "Hi {$name},
+
+Thanks for requesting a free website audit from Delvora Digital Studio!
+
+We'll review {$site_url} — design, speed, SEO, and conversion — and email
+you a clear, no-obligation report within 2–3 business days.
+
+If you'd like to talk it through sooner, just reply or reach us on WhatsApp.
+
+Best regards,
+The Delvora Digital Team
+{$cfg['to_email']}
+";
+} else {
+    // ---- PROJECT INQUIRY ----
+    $errors = [];
+    if (empty($name))    $errors[] = 'Name is required';
+    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Valid email is required';
+    if (empty($message)) $errors[] = 'Message is required';
+    if (!empty($errors)) {
+        echo json_encode(['success' => false, 'message' => implode('. ', $errors)]);
+        exit;
+    }
+
+    $subject = "New Project Inquiry from {$name} — {$site_name}";
+    $body = "=================================================
    NEW PROJECT INQUIRY — {$site_name}
 =================================================
 
@@ -96,8 +135,7 @@ Message:
 Sent from the {$site_name} website contact form
 =================================================
 ";
-
-$reply_body = "Hi {$name},
+    $reply_body = "Hi {$name},
 
 Thank you for reaching out to Delvora Digital Studio!
 
@@ -113,6 +151,7 @@ Best regards,
 The Delvora Digital Team
 {$cfg['to_email']}
 ";
+}
 
 // ---- SEND VIA SMTP (PHPMailer) ----
 require __DIR__ . '/lib/PHPMailer/Exception.php';

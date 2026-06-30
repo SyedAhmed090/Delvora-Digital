@@ -91,7 +91,14 @@ Stack reminder: plain HTML/CSS/vanilla JS on cPanel shared hosting, PHP availabl
 
 ---
 
-## Phase 2 — Conversion paths (needs their links)
+## Phase 2 — Conversion paths   ✅ BUILT (waiting on your Calendly URL)
+
+> Status: Free Audit section live (`#audit`, in nav) with its own form →
+> `contact.php` (form_type=audit) + honeypot/time-trap + GA4 lead event.
+> "Book a Call" button added to the mid-page CTA; opens a Calendly popup once
+> you paste your URL into `DELVORA_CALENDLY_URL` — until then it falls back to
+> opening the contact form so the click is never wasted.
+
 
 ### 8. "Book a Call" (Calendly / Cal.com)
 - **What:** Add a "Book a Call" CTA (hero secondary action + contact section).
