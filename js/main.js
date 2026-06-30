@@ -712,14 +712,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Team cards stagger up
-    gsap.from('.team-card', {
+    gsap.from('.team-card-pro', {
       y: 50,
       opacity: 0,
       duration: 0.6,
       stagger: 0.1,
       ease: 'power3.out',
       scrollTrigger: {
-        trigger: '.team-grid',
+        trigger: '.team-duo',
         start: 'top 85%',
       }
     });
