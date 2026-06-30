@@ -123,6 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
      ===================================================== */
   document.querySelectorAll('a[href^="#"]').forEach(a => {
     a.addEventListener('click', e => {
+      if (a.hasAttribute('data-open-form')) return; // handled by form popup
       const id = a.getAttribute('href');
       if (id === '#') return;
       const target = document.querySelector(id);
@@ -781,5 +782,294 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { threshold: 0.4, rootMargin: '-10% 0px -50% 0px' });
 
   sections.forEach(s => sectionObserver.observe(s));
+
+
+  /* =====================================================
+     19. SERVICE MODALS
+     ===================================================== */
+  (function initServiceModals() {
+    const overlay  = document.getElementById('serviceModalOverlay');
+    const modal    = document.getElementById('serviceModal');
+    const closeBtn = document.getElementById('modalClose');
+    const modalCta = document.getElementById('modalCta');
+    if (!overlay || !modal) return;
+
+    // Shared state — which service is currently open
+    let _key = null, _iconHTML = '', _serviceTitle = '';
+
+    const serviceData = {
+      web: {
+        number:   '01',
+        tagline:  'Fast. Responsive. Built to last.',
+        title:    'Web Development',
+        desc:     'We build custom websites and web applications tailored to your brand — from pixel-perfect landing pages to fully-featured web platforms. Every site we deliver is fast, mobile-first, and engineered to convert visitors into customers.',
+        features: [
+          'Custom design & development',
+          'Fully responsive (mobile-first)',
+          'CMS integration (WordPress, headless)',
+          'SEO-ready code structure',
+          'Performance & Core Web Vitals optimization',
+          'SSL setup & security hardening',
+          'Third-party API integrations',
+          'Post-launch support & maintenance',
+        ],
+        tech: ['WordPress', 'Next.js', 'React', 'Vue.js', 'PHP', 'Node.js'],
+      },
+      mobile: {
+        number:   '02',
+        tagline:  'Native quality. Cross-platform reach.',
+        title:    'Mobile App Development',
+        desc:     'We design and develop mobile applications that work flawlessly on iOS and Android — whether it\'s a consumer product or a business tool. Built for performance, intuitive to use, and ready to scale from day one.',
+        features: [
+          'iOS & Android development',
+          'React Native & Flutter',
+          'Intuitive UI/UX design',
+          'Push notifications & real-time features',
+          'Backend API integration',
+          'Offline-first architecture',
+          'App Store & Play Store submission',
+          'Ongoing updates & maintenance',
+        ],
+        tech: ['React Native', 'Flutter', 'iOS', 'Android', 'Firebase'],
+      },
+      uiux: {
+        number:   '03',
+        tagline:  'Designed for humans. Optimised to convert.',
+        title:    'UI/UX Design',
+        desc:     'We create user experiences built on research and tested against real behaviour. Every interface we design is intuitive, on-brand, and built to guide users toward action — not away from it.',
+        features: [
+          'User research & persona mapping',
+          'Wireframing & information architecture',
+          'High-fidelity UI design',
+          'Clickable interactive prototypes',
+          'Usability testing & iteration',
+          'Design system & component library',
+          'Handoff-ready design files',
+          'Brand-consistent visual language',
+        ],
+        tech: ['Figma', 'Adobe XD', 'Principle', 'Maze', 'Lottie'],
+      },
+      ecom: {
+        number:   '04',
+        tagline:  'Built to sell. Built to scale.',
+        title:    'E-Commerce Solutions',
+        desc:     'We build online shopping experiences that make buying effortless. From product listings to checkout and payment integration, our stores are optimised for conversion and ready to grow with your business.',
+        features: [
+          'Custom storefront design',
+          'JazzCash, Easypaisa & Stripe integration',
+          'Product & inventory management',
+          'Mobile-optimised shopping experience',
+          'Order tracking & shipping workflows',
+          'Discount codes & promotions engine',
+          'Analytics & conversion tracking',
+          'Multi-vendor & marketplace support',
+        ],
+        tech: ['WooCommerce', 'Shopify', 'Laravel', 'Custom APIs', 'Stripe'],
+      },
+      marketing: {
+        number:   '05',
+        tagline:  'The right audience. The right results.',
+        title:    'Digital Marketing',
+        desc:     'We run data-driven marketing campaigns that put your brand in front of the people most likely to buy — then track every click, lead, and conversion to keep improving your ROI month on month.',
+        features: [
+          'Search Engine Optimization (SEO)',
+          'Google Ads & PPC campaigns',
+          'Social media strategy & management',
+          'Content creation & blog writing',
+          'Email marketing & automation',
+          'Competitor & keyword research',
+          'Landing page optimization',
+          'Monthly performance reporting',
+        ],
+        tech: ['SEO', 'Google Ads', 'Meta Ads', 'Analytics', 'Mailchimp'],
+      },
+      brand: {
+        number:   '06',
+        tagline:  'Built to be remembered.',
+        title:    'Brand Identity',
+        desc:     'We build brand identities from the ground up — starting with strategy and ending with a complete visual system that tells your story at every touchpoint. Consistent, confident, and impossible to forget.',
+        features: [
+          'Brand strategy & market positioning',
+          'Logo design & multiple variations',
+          'Colour palette & typography selection',
+          'Brand guidelines document',
+          'Social media kit',
+          'Business card & stationery design',
+          'Email signature design',
+          'Brand presentation deck',
+        ],
+        tech: ['Figma', 'Adobe Illustrator', 'Adobe Photoshop', 'Style Guide'],
+      },
+    };
+
+    function openModal(key, iconHTML) {
+      const s = serviceData[key];
+      if (!s) return;
+
+      _key = key; _iconHTML = iconHTML || ''; _serviceTitle = s.title;
+
+      document.getElementById('modalTagline').textContent    = s.tagline;
+      document.getElementById('modalTitle').textContent      = s.title;
+      document.getElementById('modalDesc').textContent       = s.desc;
+      document.getElementById('modalIcon').innerHTML         = _iconHTML;
+      const numEl = document.getElementById('modalNumber');
+      if (numEl) numEl.textContent = s.number || '';
+
+      document.getElementById('modalFeatures').innerHTML = s.features
+        .map(f => `<li><span class="modal-check">✓</span>${f}</li>`)
+        .join('');
+
+      document.getElementById('modalTech').innerHTML = s.tech
+        .map(t => `<span>${t}</span>`)
+        .join('');
+
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+
+      gsap.fromTo(modal,
+        { y: 28, opacity: 0, scale: 0.96 },
+        { y: 0, opacity: 1, scale: 1, duration: 0.4, ease: 'power3.out', clearProps: 'transform,opacity,scale' }
+      );
+    }
+
+    function closeModal() {
+      gsap.to(modal, {
+        y: 18, opacity: 0, scale: 0.96, duration: 0.22, ease: 'power2.in',
+        onComplete: () => {
+          overlay.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      });
+    }
+
+    document.querySelectorAll('.service-card[data-service]').forEach(card => {
+      const iconHTML = card.querySelector('.service-icon-wrap')?.innerHTML || '';
+      card.addEventListener('click', () => openModal(card.dataset.service, iconHTML));
+    });
+
+    closeBtn?.addEventListener('click', closeModal);
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+
+    // Form modal refs declared here so keydown handler can reach them
+    const fOverlay = document.getElementById('formModalOverlay');
+    const fModal   = document.getElementById('formModal');
+    const fClose   = document.getElementById('formModalClose');
+
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Escape') return;
+      if (fOverlay?.classList.contains('active')) closeFormModal();
+      else if (overlay.classList.contains('active')) closeModal();
+    });
+
+    // CTA → close service detail, then open form modal
+    modalCta?.addEventListener('click', e => {
+      e.preventDefault();
+      closeModal();
+      setTimeout(openFormModal, 260);
+    });
+
+
+    /* ── FORM MODAL ── */
+
+    const svcCheckboxIds = {
+      web: 'pp_svc_web', mobile: 'pp_svc_mobile', uiux: 'pp_svc_uiux',
+      ecom: 'pp_svc_ecom', marketing: 'pp_svc_marketing', brand: 'pp_svc_brand',
+    };
+
+    const _genericIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px;color:var(--pink)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
+
+    function openFormModal() {
+      if (!fOverlay || !fModal) return;
+
+      const hasService = !!_serviceTitle;
+      document.getElementById('formModalIcon').innerHTML  = _iconHTML || _genericIcon;
+      document.getElementById('formModalTitle').innerHTML =
+        `<span class="gradient-text">${_serviceTitle || 'your project'}</span>`;
+      const fmlPre  = fModal.querySelector('.fml-pre');
+      const fmlPost = fModal.querySelector('.fml-post');
+      if (fmlPre)  fmlPre.textContent  = hasService ? 'Starting your'       : 'Tell us about';
+      if (fmlPost) fmlPost.textContent = hasService ? 'project'             : "and let's build it.";
+
+      document.querySelectorAll('#popupContactForm input[type="checkbox"]')
+        .forEach(cb => { cb.checked = false; });
+      const cbId = svcCheckboxIds[_key];
+      if (cbId) { const cb = document.getElementById(cbId); if (cb) cb.checked = true; }
+
+      fOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      gsap.fromTo(fModal,
+        { y: 28, opacity: 0, scale: 0.96 },
+        { y: 0, opacity: 1, scale: 1, duration: 0.42, ease: 'power3.out', clearProps: 'transform,opacity,scale' }
+      );
+    }
+
+    // Exposed for generic CTAs (no service pre-selected)
+    window._delvoraOpenForm = () => {
+      _key = null; _iconHTML = ''; _serviceTitle = '';
+      openFormModal();
+    };
+
+    function closeFormModal() {
+      if (!fModal) return;
+      gsap.to(fModal, {
+        y: 18, opacity: 0, scale: 0.96, duration: 0.22, ease: 'power2.in',
+        onComplete: () => {
+          fOverlay.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      });
+    }
+
+    fClose?.addEventListener('click', closeFormModal);
+    fOverlay?.addEventListener('click', e => { if (e.target === fOverlay) closeFormModal(); });
+
+    // Popup form submission
+    const ppForm    = document.getElementById('popupContactForm');
+    const ppSubmit  = document.getElementById('ppSubmitBtn');
+    const ppSuccess = document.getElementById('ppSuccess');
+    const ppError   = document.getElementById('ppError');
+
+    ppForm?.addEventListener('submit', async e => {
+      e.preventDefault();
+      const btnText = ppSubmit?.querySelector('.pp-btn-text');
+      const btnLoad = ppSubmit?.querySelector('.pp-btn-loading');
+      if (btnText) btnText.style.display = 'none';
+      if (btnLoad) btnLoad.style.display = 'inline';
+      if (ppSubmit) ppSubmit.disabled = true;
+      if (ppSuccess) ppSuccess.style.display = 'none';
+      if (ppError)   ppError.style.display   = 'none';
+
+      try {
+        const res  = await fetch('php/contact.php', { method: 'POST', body: new FormData(ppForm) });
+        const data = await res.json();
+        if (data.success) {
+          ppForm.reset();
+          // Re-check the service after reset
+          const cbId = svcCheckboxIds[_key];
+          if (cbId) { const cb = document.getElementById(cbId); if (cb) cb.checked = true; }
+          if (ppSuccess) ppSuccess.style.display = 'flex';
+        } else {
+          if (ppError) ppError.style.display = 'flex';
+        }
+      } catch {
+        if (ppError) ppError.style.display = 'flex';
+      } finally {
+        if (btnText) btnText.style.display = 'inline';
+        if (btnLoad) btnLoad.style.display = 'none';
+        if (ppSubmit) ppSubmit.disabled = false;
+      }
+    });
+  })();
+
+
+  /* =====================================================
+     20. GENERIC CTA → FORM POPUP
+     ===================================================== */
+  document.querySelectorAll('[data-open-form]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.preventDefault();
+      if (typeof window._delvoraOpenForm === 'function') window._delvoraOpenForm();
+    });
+  });
 
 });
