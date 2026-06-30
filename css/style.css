@@ -824,8 +824,9 @@ ul { list-style: none; }
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.04em;
-  color: var(--text-dim);
-  border: 1px solid var(--border-2);
+  color: var(--pink-light);
+  border: 1px solid var(--pink-border);
+  background: rgba(232, 73, 122, 0.08);
   border-radius: var(--radius-pill);
   padding: 7px 16px;
   align-self: flex-start;
@@ -833,9 +834,9 @@ ul { list-style: none; }
   transition: color 0.25s, border-color 0.25s, background 0.25s;
 }
 .service-card:hover .service-arrow {
-  color: var(--pink-light);
-  border-color: var(--pink-border);
-  background: rgba(232, 73, 122, 0.07);
+  color: #fff;
+  border-color: var(--pink);
+  background: rgba(232, 73, 122, 0.22);
 }
 
 
