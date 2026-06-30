@@ -141,16 +141,136 @@ ul { list-style: none; }
 .btn-lg { padding: 15px 32px; font-size: 15px; }
 .btn-full { width: 100%; }
 
-/* ---- REVEAL ANIMATION BASE ---- */
+/* ---- SCROLL PROGRESS BAR ---- */
+.scroll-progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  width: 100%;
+  background: var(--grad-pink);
+  transform-origin: left center;
+  transform: scaleX(0);
+  z-index: 9999;
+  pointer-events: none;
+}
+
+/* ---- CUSTOM CURSOR ---- */
+.cursor-dot {
+  width: 8px; height: 8px;
+  background: var(--pink);
+  border-radius: 50%;
+  position: fixed;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 9998;
+  will-change: transform;
+  transition: opacity 0.3s, width 0.25s var(--ease-out), height 0.25s var(--ease-out), background 0.25s;
+}
+.cursor-ring {
+  width: 38px; height: 38px;
+  border: 1.5px solid rgba(232, 73, 122, 0.55);
+  border-radius: 50%;
+  position: fixed;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 9997;
+  will-change: transform;
+  transition: width 0.35s var(--ease-out), height 0.35s var(--ease-out), border-color 0.35s, opacity 0.3s;
+}
+.cursor-dot.hovering  { width: 0; height: 0; opacity: 0; }
+.cursor-ring.hovering { width: 56px; height: 56px; border-color: var(--pink); }
+.cursor-dot.hidden, .cursor-ring.hidden { opacity: 0; }
+
+/* hide custom cursor on touch devices */
+@media (hover: none) {
+  .cursor-dot, .cursor-ring { display: none; }
+}
+
+/* ---- HERO TEXT MASK REVEAL ---- */
+.line-wrap {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 6px;
+}
+.h-line {
+  display: block;
+  transform: translateY(110%);
+  transition: transform 0.95s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.h-line.visible { transform: translateY(0); }
+
+/* ---- WORD SPLIT ANIMATION (for section headings) ---- */
+.word-wrap { display: inline-block; overflow: hidden; vertical-align: bottom; }
+.word-inner {
+  display: inline-block;
+  transform: translateY(110%);
+  transition: transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.word-inner.visible { transform: translateY(0); }
+
+/* ---- REVEAL ANIMATION BASE (improved) ---- */
 .reveal {
   opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+  transform: translateY(28px);
+  transition: opacity 0.75s var(--ease-out), transform 0.75s var(--ease-out);
 }
 .reveal.visible {
   opacity: 1;
   transform: translateY(0);
 }
+
+/* ---- CARD SPOTLIGHT EFFECT ---- */
+.service-card::before,
+.why-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    280px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(232, 73, 122, 0.08),
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+  z-index: 0;
+}
+.service-card:hover::before,
+.why-card:hover::before { opacity: 1; }
+.service-card > *,
+.why-card > * { position: relative; z-index: 1; }
+
+/* ---- BUTTON SHINE ---- */
+.btn-primary { position: relative; overflow: hidden; }
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.22), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.55s ease;
+}
+.btn-primary:hover::before { left: 160%; }
+
+/* ---- 3D TILT — cards ---- */
+.service-card,
+.project-card,
+.why-card,
+.team-card {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* ---- PARALLAX SECTIONS ---- */
+.parallax-bg {
+  will-change: transform;
+}
+
+/* ---- SECTION HEADING SPLIT (wrapper) ---- */
+.split-heading { overflow: visible; }
 
 
 /* =====================================================
@@ -341,8 +461,8 @@ ul { list-style: none; }
   letter-spacing: 0.05em;
   margin-bottom: 32px;
   opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.6s 0.1s, transform 0.6s 0.1s;
+  transform: translateY(16px);
+  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
 }
 .hero-eyebrow.visible { opacity: 1; transform: translateY(0); }
 
@@ -383,8 +503,8 @@ ul { list-style: none; }
   max-width: 560px;
   margin: 0 auto 40px;
   opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.7s 0.5s, transform 0.7s 0.5s;
+  transform: translateY(18px);
+  transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
 }
 .hero-sub.visible { opacity: 1; transform: translateY(0); }
 
@@ -395,8 +515,8 @@ ul { list-style: none; }
   gap: 16px;
   flex-wrap: wrap;
   opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.7s 0.65s, transform 0.7s 0.65s;
+  transform: translateY(18px);
+  transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
 }
 .hero-actions.visible { opacity: 1; transform: translateY(0); }
 
@@ -410,9 +530,9 @@ ul { list-style: none; }
   align-items: center;
   gap: 8px;
   opacity: 0;
-  animation: fadeIn 1s 1.2s forwards;
+  transition: opacity 1s var(--ease-out);
 }
-@keyframes fadeIn { to { opacity: 1; } }
+.hero-scroll.visible { opacity: 1; }
 
 .scroll-line {
   width: 1px; height: 48px;
