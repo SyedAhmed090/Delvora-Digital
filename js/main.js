@@ -595,26 +595,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const sections = document.querySelectorAll('section[id]');
   const navLinks = document.querySelectorAll('.nav-link');
 
-  new IntersectionObserver((entries) => {
+  const sectionObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const id = entry.target.getAttribute('id');
-        navLinks.forEach(link => {
-          link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
-        });
-      }
-    });
-  }, { threshold: 0.45 }).observe || sections.forEach(s =>
-    new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const id = entry.target.getAttribute('id');
-          navLinks.forEach(link =>
-            link.classList.toggle('active', link.getAttribute('href') === `#${id}`)
-          );
-        }
+      if (!entry.isIntersecting) return;
+      const id = entry.target.getAttribute('id');
+      navLinks.forEach(link => {
+        link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
       });
-    }, { threshold: 0.45 }).observe(s)
-  );
+    });
+  }, { threshold: 0.4, rootMargin: '-10% 0px -50% 0px' });
+
+  sections.forEach(s => sectionObserver.observe(s));
 
 });

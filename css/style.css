@@ -335,8 +335,10 @@ ul { list-style: none; }
   border-radius: 2px;
   transition: width 0.3s var(--ease-out);
 }
-.nav-link:hover { color: var(--white); }
-.nav-link:hover::after { width: 100%; }
+.nav-link:hover,
+.nav-link.active { color: var(--white); }
+.nav-link:hover::after,
+.nav-link.active::after { width: 100%; }
 
 .nav-cta { display: inline-flex; }
 
@@ -719,15 +721,7 @@ ul { list-style: none; }
   transition: background 0.3s;
   cursor: pointer;
 }
-.service-card::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--pink-glow);
-  opacity: 0;
-  transition: opacity 0.3s;
-  pointer-events: none;
-}
+/* ::before spotlight handles hover glow (defined in animation section above) */
 .service-card:hover { background: var(--bg-card-h); }
 .service-card:hover::after { opacity: 1; }
 
@@ -1036,6 +1030,8 @@ ul { list-style: none; }
   transition: opacity 0.3s;
 }
 .process-step:hover .step-num { opacity: 1; }
+
+.process-step:last-child { grid-column: 1 / -1; }
 
 .step-content h3 {
   font-size: 18px;
