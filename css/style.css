@@ -45,10 +45,25 @@ html { -webkit-font-smoothing: antialiased; }
 
 body {
   font-family: 'Inter', sans-serif;
-  background: var(--bg);
+  background:
+    radial-gradient(ellipse 900px 700px at -5% 0%,   rgba(232,73,122,0.09) 0%, transparent 55%),
+    radial-gradient(ellipse 700px 900px at 105% 45%,  rgba(139,92,246,0.06) 0%, transparent 55%),
+    var(--bg);
   color: var(--text);
   line-height: 1.6;
   overflow-x: hidden;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.04;
+  pointer-events: none;
+  z-index: 9999;
 }
 
 ::selection { background: var(--pink); color: #fff; }
@@ -660,7 +675,11 @@ ul { list-style: none; }
 /* =====================================================
    ABOUT / WHO WE ARE
    ===================================================== */
-.about { background: var(--bg); }
+.about {
+  background:
+    radial-gradient(ellipse 55% 50% at 100% 0%, rgba(232,73,122,0.08) 0%, transparent 60%),
+    var(--bg);
+}
 
 .about-grid {
   display: grid;
@@ -735,7 +754,11 @@ ul { list-style: none; }
 /* =====================================================
    SERVICES
    ===================================================== */
-.services { background: var(--bg-2); }
+.services {
+  background:
+    radial-gradient(ellipse 45% 60% at 100% 50%, rgba(232,73,122,0.07) 0%, transparent 55%),
+    var(--bg-2);
+}
 .services .section-heading, .services .section-sub {
   display: block;
 }
@@ -843,7 +866,11 @@ ul { list-style: none; }
 /* =====================================================
    PROJECTS CAROUSEL
    ===================================================== */
-.projects { background: var(--bg); }
+.projects {
+  background:
+    radial-gradient(ellipse 50% 60% at 0% 100%, rgba(139,92,246,0.07) 0%, transparent 60%),
+    var(--bg);
+}
 .projects .container { margin-bottom: 40px; }
 
 .drag-hint {
@@ -1055,7 +1082,11 @@ ul { list-style: none; }
 /* =====================================================
    HOW WE WORK
    ===================================================== */
-.process { background: var(--bg-2); }
+.process {
+  background:
+    radial-gradient(ellipse 50% 55% at 0% 100%, rgba(139,92,246,0.06) 0%, transparent 55%),
+    var(--bg-2);
+}
 .process .section-sub { max-width: 640px; }
 
 .process-grid {
@@ -1166,7 +1197,11 @@ ul { list-style: none; }
 /* =====================================================
    TEAM
    ===================================================== */
-.team { background: var(--bg-2); }
+.team {
+  background:
+    radial-gradient(ellipse 60% 50% at 100% 50%, rgba(232,73,122,0.07) 0%, transparent 55%),
+    var(--bg-2);
+}
 
 .team-duo {
   display: grid;
@@ -1315,7 +1350,11 @@ ul { list-style: none; }
 /* =====================================================
    FAQ
    ===================================================== */
-.faq { background: var(--bg); }
+.faq {
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 0%, rgba(232,73,122,0.06) 0%, transparent 55%),
+    var(--bg);
+}
 
 .faq-grid {
   display: grid;
@@ -1379,7 +1418,11 @@ ul { list-style: none; }
 /* =====================================================
    CONTACT
    ===================================================== */
-.contact { background: var(--bg-2); }
+.contact {
+  background:
+    radial-gradient(ellipse 60% 55% at 0% 50%, rgba(139,92,246,0.07) 0%, transparent 55%),
+    var(--bg-2);
+}
 
 .contact-grid {
   display: grid;
@@ -1590,7 +1633,11 @@ a.detail-value:hover { color: var(--pink); }
 /* =====================================================
    TESTIMONIALS
    ===================================================== */
-.testimonials { background: var(--bg-2); }
+.testimonials {
+  background:
+    radial-gradient(ellipse 55% 60% at 0% 0%, rgba(139,92,246,0.07) 0%, transparent 55%),
+    var(--bg-2);
+}
 
 .testi-grid {
   display: grid;
