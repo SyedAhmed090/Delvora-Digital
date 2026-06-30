@@ -1130,6 +1130,55 @@ textarea:focus-visible,
   border-radius: 50%;
 }
 
+/* ---- 3D ROTATING BRAND MARK ---- */
+.brand3d {
+  position: absolute;
+  top: 50%;
+  right: 4%;
+  transform: translateY(-50%);
+  width: 300px;
+  height: 300px;
+  perspective: 1100px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.9;
+}
+.brand3d-glow {
+  position: absolute;
+  inset: -18%;
+  background: radial-gradient(circle, rgba(232,73,122,0.22) 0%, rgba(139,92,246,0.10) 45%, transparent 70%);
+  filter: blur(22px);
+}
+.brand3d-rotor {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  animation: brand3dSpin 18s linear infinite;
+}
+@keyframes brand3dSpin {
+  from { transform: rotateX(-14deg) rotateY(0deg); }
+  to   { transform: rotateX(-14deg) rotateY(360deg); }
+}
+.brand3d svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: translateZ(var(--z, 0));
+}
+.brand3d .b3d-layer { stroke: #5A0E29; }
+.brand3d .b3d-face {
+  stroke: url(#delvoraGrad);
+  filter: drop-shadow(0 0 9px rgba(232,73,122,0.5));
+}
+
+@media (max-width: 900px) {
+  .brand3d { width: 220px; opacity: 0.55; right: 1%; }
+}
+@media (max-width: 600px) {
+  .brand3d { display: none; }
+}
+
 .cta-mid-inner { position: relative; z-index: 1; text-align: center; }
 
 .cta-mid-heading {

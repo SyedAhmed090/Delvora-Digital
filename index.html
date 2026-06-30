@@ -99,6 +99,27 @@
 </head>
 <body>
 
+<!-- Reusable Delvora mark (symbol + gradient) for inline <use> references -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="delvoraGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F8A0C0"/>
+      <stop offset="0.55" stop-color="#E8497A"/>
+      <stop offset="1" stop-color="#B81E5B"/>
+    </linearGradient>
+    <symbol id="delvoraMark" viewBox="0 0 100 100">
+      <g fill="none" stroke-linecap="butt">
+        <path stroke-width="13" d="M52.65 12.09 A38 38 0 0 1 87.91 47.35"/>
+        <path stroke-width="13" d="M87.91 52.65 A38 38 0 0 1 52.65 87.91"/>
+        <path stroke-width="13" d="M47.35 87.91 A38 38 0 0 1 12.09 52.65"/>
+        <path stroke-width="13" d="M12.09 47.35 A38 38 0 0 1 47.35 12.09"/>
+        <path stroke-width="9" d="M52.51 26.13 A24 24 0 0 1 52.51 73.87"/>
+        <path stroke-width="9" d="M47.49 73.87 A24 24 0 0 1 47.49 26.13"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
 <!-- Custom Cursor -->
 <div class="cursor-dot" id="cursorDot"></div>
 <div class="cursor-ring" id="cursorRing"></div>
@@ -455,6 +476,19 @@
 <section class="cta-mid">
   <div class="cta-mid-bg">
     <div class="cta-orb"></div>
+  </div>
+  <!-- 3D rotating brand mark -->
+  <div class="brand3d" aria-hidden="true">
+    <div class="brand3d-glow"></div>
+    <div class="brand3d-rotor">
+      <svg class="b3d-layer" viewBox="0 0 100 100" style="--z:-20px"><use href="#delvoraMark"/></svg>
+      <svg class="b3d-layer" viewBox="0 0 100 100" style="--z:-16px"><use href="#delvoraMark"/></svg>
+      <svg class="b3d-layer" viewBox="0 0 100 100" style="--z:-12px"><use href="#delvoraMark"/></svg>
+      <svg class="b3d-layer" viewBox="0 0 100 100" style="--z:-8px"><use href="#delvoraMark"/></svg>
+      <svg class="b3d-layer" viewBox="0 0 100 100" style="--z:-4px"><use href="#delvoraMark"/></svg>
+      <svg class="b3d-layer" viewBox="0 0 100 100" style="--z:0px"><use href="#delvoraMark"/></svg>
+      <svg class="b3d-face" viewBox="0 0 100 100" style="--z:4px"><use href="#delvoraMark"/></svg>
+    </div>
   </div>
   <div class="container cta-mid-inner">
     <span class="section-tag reveal">Let's Talk</span>
