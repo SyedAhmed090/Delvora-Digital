@@ -821,14 +821,21 @@ ul { list-style: none; }
 }
 
 .service-arrow {
-  font-size: 18px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   color: var(--text-dim);
-  transition: color 0.2s, transform 0.2s;
-  align-self: flex-end;
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-pill);
+  padding: 7px 16px;
+  align-self: flex-start;
+  margin-top: auto;
+  transition: color 0.25s, border-color 0.25s, background 0.25s;
 }
 .service-card:hover .service-arrow {
-  color: var(--pink);
-  transform: translateX(4px);
+  color: var(--pink-light);
+  border-color: var(--pink-border);
+  background: rgba(232, 73, 122, 0.07);
 }
 
 
