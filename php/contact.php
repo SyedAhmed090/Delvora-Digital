@@ -29,6 +29,7 @@ if (!empty($_POST['website'])) {
 //    only rejects a positive, implausibly-small elapsed time).
 if (isset($_POST['form_ts']) && is_numeric($_POST['form_ts'])) {
     $elapsed_ms = (microtime(true) * 1000) - (float) $_POST['form_ts'];
+    // reject if submitted in <2s (2000 ms) — humans can't fill the form that fast; bots submit near-instantly.
     if ($elapsed_ms >= 0 && $elapsed_ms < 2000) {
         echo json_encode(['success' => false, 'message' => 'Please take a moment and try again.']);
         exit;
@@ -53,12 +54,18 @@ function clean($val) {
 $form_type = clean($_POST['form_type'] ?? 'project');
 
 $name    = clean($_POST['name']    ?? '');
-$email   = filter_var(trim($_POST['email'] ?? ''), FILTER_SANITIZE_EMAIL);
+$email   = trim($_POST['email'] ?? ''); // validated below with FILTER_VALIDATE_EMAIL (FILTER_SANITIZE_EMAIL deprecated in PHP 8.1)
 $phone   = clean($_POST['phone']   ?? '');
 $company = clean($_POST['company'] ?? '');
 $message = clean($_POST['message'] ?? '');
 $budget  = clean($_POST['budget']  ?? '');
-$site_url = filter_var(trim($_POST['site_url'] ?? ''), FILTER_SANITIZE_URL);
+// Website URL (FILTER_SANITIZE_URL deprecated in PHP 8.1). Accept a well-formed URL
+// as-is; otherwise keep it as a cleaned plain string — a prospect may type
+// "example.com" without a scheme, and we don't want to reject the audit request.
+$site_url = trim($_POST['site_url'] ?? '');
+if ($site_url !== '' && !filter_var($site_url, FILTER_VALIDATE_URL)) {
+    $site_url = clean($site_url);
+}
 
 // Services (array of checkboxes)
 $services_raw = $_POST['services'] ?? [];

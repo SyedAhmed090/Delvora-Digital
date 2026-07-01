@@ -1,49 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Terms of Service — Delvora Digital Studio</title>
-  <meta name="description" content="The terms and conditions for using the Delvora Digital Studio website and services.">
-  <meta name="robots" content="noindex, follow">
-  <meta name="theme-color" content="#080808">
-  <link rel="canonical" href="https://delvoradigital.com/terms.html">
-
-  <link rel="icon" type="image/svg+xml" href="assets/logo/delvora-mark.svg">
-  <link rel="icon" type="image/png" href="assets/logo/delvora-logo.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
-
-  <!-- Google Analytics 4 — paste your Measurement ID into DELVORA_GA_ID below. -->
-  <script>
-    window.DELVORA_GA_ID = 'G-XXXXXXXXXX'; // <-- replace with your GA4 ID
-    (function () {
-      var id = window.DELVORA_GA_ID;
-      if (!id || id.indexOf('XXXX') !== -1) return;
-      var s = document.createElement('script');
-      s.async = true;
-      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;
-      document.head.appendChild(s);
-      window.dataLayer = window.dataLayer || [];
-      window.gtag = function () { dataLayer.push(arguments); };
-      gtag('js', new Date());
-      gtag('config', id);
-    })();
-  </script>
-</head>
-<body>
-
-<nav class="legal-nav">
-  <div class="container nav-inner">
-    <a href="index.html" class="nav-logo">
-      <img src="assets/logo/delvora-logo.png" alt="Delvora Digital Studio" class="logo-img" width="51" height="36">
-      <span class="logo-text">DELVORA</span>
-    </a>
-    <a href="index.html" class="legal-back">← Back to site</a>
-  </div>
-</nav>
+<?php
+$home      = '/';
+$robots    = 'noindex, follow';
+$pageTitle = 'Terms of Service — Delvora Digital Studio';
+$pageDesc  = 'The terms and conditions for using the Delvora Digital Studio website and services.';
+$canonical = 'https://delvoradigital.com/terms.php';
+include __DIR__ . '/partials/header.php';
+?>
 
 <main class="legal">
   <span class="legal-eyebrow">Legal</span>
@@ -88,18 +50,4 @@
   </div>
 </main>
 
-<footer class="footer">
-  <div class="container footer-inner">
-    <div class="footer-bottom">
-      <p>© 2026 Delvora Digital Studio. All rights reserved.</p>
-      <div class="footer-bottom-links">
-        <a href="privacy.html">Privacy Policy</a>
-        <a href="terms.html">Terms of Service</a>
-        <a href="index.html">Home</a>
-      </div>
-    </div>
-  </div>
-</footer>
-
-</body>
-</html>
+<?php include __DIR__ . '/partials/footer.php'; ?>

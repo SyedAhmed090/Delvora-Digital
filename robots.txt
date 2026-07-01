@@ -1,7 +1,8 @@
 User-agent: *
 Allow: /
 
-# Block server-side handler from indexing
+# Block server-side handlers and includes from indexing
 Disallow: /php/
+Disallow: /partials/
 
 Sitemap: https://delvoradigital.com/sitemap.xml

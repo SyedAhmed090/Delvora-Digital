@@ -120,7 +120,21 @@ Stack reminder: plain HTML/CSS/vanilla JS on cPanel shared hosting, PHP availabl
 
 ---
 
-## Phase 3 — SEO / content engine (largest; architecture decision)
+## Phase 3 — SEO / content engine   ✅ BUILT (architecture: PHP includes)
+
+> Status: site refactored to **PHP includes**. Shared shell now lives in
+> `partials/header.php` + `partials/footer.php`; `index.html` → `index.php`.
+> All 6 service pages live under `/services/*.php` (each feeds data into
+> `partials/service-page.php`), with Service + Breadcrumb + FAQ JSON-LD and
+> Karachi/Pakistan local-SEO copy. Blog live at `/blog/` (index + 1 sample
+> article, `how-to-choose-web-development-company-karachi.php`) with Blog +
+> BlogPosting + Breadcrumb JSON-LD. Footer "Services" links, the homepage
+> service modal ("View full service details"), and `sitemap.xml` all point to
+> the new pages. `robots.txt` disallows `/partials/`.
+>
+> Ongoing: add more blog articles over time (drop a file in `/blog/` + one
+> entry in the `$posts` array in `blog/index.php`). Optional next: swap the
+> placeholder project/team images, add per-service OG images.
 
 ### 10. Service pages + blog (single-page → multi-page)
 - **What:**

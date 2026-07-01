@@ -108,14 +108,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { passive: true });
 
   hamburger?.addEventListener('click', () => {
-    hamburger.classList.toggle('open');
+    const isOpen = hamburger.classList.toggle('open');
     mobileMenu?.classList.toggle('open');
+    hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
   });
 
   document.querySelectorAll('.mobile-link, .mobile-cta').forEach(link => {
     link.addEventListener('click', () => {
       hamburger?.classList.remove('open');
       mobileMenu?.classList.remove('open');
+      hamburger?.setAttribute('aria-expanded', 'false');
     });
   });
 
@@ -123,6 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!navbar?.contains(e.target)) {
       hamburger?.classList.remove('open');
       mobileMenu?.classList.remove('open');
+      hamburger?.setAttribute('aria-expanded', 'false');
     }
   });
 
@@ -758,7 +761,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (error)   error.style.display   = 'none';
 
     try {
-      const res  = await fetch('php/contact.php', { method: 'POST', body: new FormData(form) });
+      const res  = await fetch('/php/contact.php', { method: 'POST', body: new FormData(form) });
       const data = await res.json();
 
       if (data.success) {
@@ -798,7 +801,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   /* =====================================================
-     19. SERVICE MODALS
+     19. MODAL FOCUS MANAGEMENT (shared by both modals)
+     ===================================================== */
+  function _getFocusable(container) {
+    return Array.from(container.querySelectorAll(
+      'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    )).filter(el => el.offsetParent !== null || el.getClientRects().length > 0);
+  }
+
+  function createFocusTrap(modalEl) {
+    let previouslyFocused = null;
+    function handleKeydown(e) {
+      if (e.key !== 'Tab') return;
+      const focusable = _getFocusable(modalEl);
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last  = focusable[focusable.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first || !modalEl.contains(document.activeElement)) {
+          e.preventDefault(); last.focus();
+        }
+      } else {
+        if (document.activeElement === last || !modalEl.contains(document.activeElement)) {
+          e.preventDefault(); first.focus();
+        }
+      }
+    }
+    return {
+      activate(initialFocusEl) {
+        previouslyFocused = document.activeElement;
+        document.addEventListener('keydown', handleKeydown, true);
+        const target = initialFocusEl || _getFocusable(modalEl)[0] || modalEl;
+        setTimeout(() => { try { target.focus(); } catch (_) {} }, 50);
+      },
+      deactivate() {
+        document.removeEventListener('keydown', handleKeydown, true);
+        if (previouslyFocused && typeof previouslyFocused.focus === 'function') {
+          try { previouslyFocused.focus(); } catch (_) {}
+        }
+        previouslyFocused = null;
+      }
+    };
+  }
+
+
+  /* =====================================================
+     19a. SERVICE MODALS  (homepage only — #serviceModalOverlay)
      ===================================================== */
   (function initServiceModals() {
     const overlay  = document.getElementById('serviceModalOverlay');
@@ -806,6 +854,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeBtn = document.getElementById('modalClose');
     const modalCta = document.getElementById('modalCta');
     if (!overlay || !modal) return;
+
+    const serviceTrap = createFocusTrap(modal);
 
     // Shared state — which service is currently open
     let _key = null, _iconHTML = '', _serviceTitle = '';
@@ -928,6 +978,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const numEl = document.getElementById('modalNumber');
       if (numEl) numEl.textContent = s.number || '';
 
+      const _servicePages = {
+        web: '/services/web-development.php',
+        mobile: '/services/mobile-apps.php',
+        uiux: '/services/ui-ux-design.php',
+        ecom: '/services/ecommerce.php',
+        marketing: '/services/digital-marketing.php',
+        brand: '/services/brand-identity.php',
+      };
+      const pageLink = document.getElementById('modalPageLink');
+      if (pageLink) pageLink.href = _servicePages[key] || '#';
+
       document.getElementById('modalFeatures').innerHTML = s.features
         .map(f => `<li><span class="modal-check">✓</span>${f}</li>`)
         .join('');
@@ -938,6 +999,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       overlay.classList.add('active');
       document.body.style.overflow = 'hidden';
+      serviceTrap.activate(closeBtn);
 
       gsap.fromTo(modal,
         { y: 28, opacity: 0, scale: 0.96 },
@@ -946,6 +1008,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function closeModal() {
+      serviceTrap.deactivate();
       gsap.to(modal, {
         y: 18, opacity: 0, scale: 0.96, duration: 0.22, ease: 'power2.in',
         onComplete: () => {
@@ -963,26 +1026,36 @@ document.addEventListener('DOMContentLoaded', () => {
     closeBtn?.addEventListener('click', closeModal);
     overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
 
-    // Form modal refs declared here so keydown handler can reach them
+    // Escape closes the service modal (form modal has its own handler)
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && overlay.classList.contains('active')) closeModal();
+    });
+
+    // CTA → close service detail, then open form modal with the service context
+    modalCta?.addEventListener('click', e => {
+      e.preventDefault();
+      const ctx = { key: _key, iconHTML: _iconHTML, serviceTitle: _serviceTitle };
+      closeModal();
+      setTimeout(() => {
+        if (typeof window._delvoraOpenForm === 'function') window._delvoraOpenForm(ctx);
+      }, 260);
+    });
+  })();
+
+
+  /* =====================================================
+     19b. FORM MODAL  (every page — #formModalOverlay)
+     ===================================================== */
+  (function initFormModal() {
     const fOverlay = document.getElementById('formModalOverlay');
     const fModal   = document.getElementById('formModal');
     const fClose   = document.getElementById('formModalClose');
+    if (!fOverlay || !fModal) return;
 
-    document.addEventListener('keydown', e => {
-      if (e.key !== 'Escape') return;
-      if (fOverlay?.classList.contains('active')) closeFormModal();
-      else if (overlay.classList.contains('active')) closeModal();
-    });
+    const formTrap = createFocusTrap(fModal);
 
-    // CTA → close service detail, then open form modal
-    modalCta?.addEventListener('click', e => {
-      e.preventDefault();
-      closeModal();
-      setTimeout(openFormModal, 260);
-    });
-
-
-    /* ── FORM MODAL ── */
+    // Context of the currently-open form (service pre-selection, icon, title)
+    let _key = null, _iconHTML = '', _serviceTitle = '';
 
     const svcCheckboxIds = {
       web: 'pp_svc_web', mobile: 'pp_svc_mobile', uiux: 'pp_svc_uiux',
@@ -992,8 +1065,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const _genericIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px;color:var(--pink)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
 
     function openFormModal() {
-      if (!fOverlay || !fModal) return;
-
       const hasService = !!_serviceTitle;
       document.getElementById('formModalIcon').innerHTML  = _iconHTML || _genericIcon;
       document.getElementById('formModalTitle').innerHTML =
@@ -1010,20 +1081,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
       fOverlay.classList.add('active');
       document.body.style.overflow = 'hidden';
+      formTrap.activate(fClose);
       gsap.fromTo(fModal,
         { y: 28, opacity: 0, scale: 0.96 },
         { y: 0, opacity: 1, scale: 1, duration: 0.42, ease: 'power3.out', clearProps: 'transform,opacity,scale' }
       );
     }
 
-    // Exposed for generic CTAs (no service pre-selected)
-    window._delvoraOpenForm = () => {
-      _key = null; _iconHTML = ''; _serviceTitle = '';
+    // Exposed for generic CTAs; an optional ctx pre-selects a service (from the service modal)
+    window._delvoraOpenForm = (ctx) => {
+      ctx = ctx || {};
+      _key          = ctx.key || null;
+      _iconHTML     = ctx.iconHTML || '';
+      _serviceTitle = ctx.serviceTitle || '';
       openFormModal();
     };
 
     function closeFormModal() {
-      if (!fModal) return;
+      formTrap.deactivate();
       gsap.to(fModal, {
         y: 18, opacity: 0, scale: 0.96, duration: 0.22, ease: 'power2.in',
         onComplete: () => {
@@ -1034,7 +1109,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     fClose?.addEventListener('click', closeFormModal);
-    fOverlay?.addEventListener('click', e => { if (e.target === fOverlay) closeFormModal(); });
+    fOverlay.addEventListener('click', e => { if (e.target === fOverlay) closeFormModal(); });
+
+    // Escape closes the form modal (independent of the service modal)
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && fOverlay.classList.contains('active')) closeFormModal();
+    });
 
     // Popup form submission
     const ppForm    = document.getElementById('popupContactForm');
@@ -1053,7 +1133,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (ppError)   ppError.style.display   = 'none';
 
       try {
-        const res  = await fetch('php/contact.php', { method: 'POST', body: new FormData(ppForm) });
+        const res  = await fetch('/php/contact.php', { method: 'POST', body: new FormData(ppForm) });
         const data = await res.json();
         if (data.success) {
           ppForm.reset();
@@ -1124,7 +1204,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (auError)   auError.style.display   = 'none';
 
       try {
-        const res  = await fetch('php/contact.php', { method: 'POST', body: new FormData(auditForm) });
+        const res  = await fetch('/php/contact.php', { method: 'POST', body: new FormData(auditForm) });
         const data = await res.json();
         if (data.success) {
           auditForm.reset();
